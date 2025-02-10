@@ -126,9 +126,9 @@ class MLXLModel(smolagents.Model):
             #print(step.text, end="", flush=True)
             self.last_output_token_count += 1
             text += step.text
-            for stop_sequence in prepared_stop_sequences:
+            for stop_sequence in prepared_stop_sequences + [self.tokenizer.eos_token]:
                 if text.rstrip().endswith(stop_sequence):
                     text = text.rstrip()[: -len(stop_sequence)]
-                    return self._to_message(text, tools_to_call_from)          
+                    return self._to_message(text, tools_to_call_from)
 
         return self._to_message(text, tools_to_call_from)
