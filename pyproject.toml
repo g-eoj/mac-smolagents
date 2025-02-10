@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mac-smolagents"
+dynamic = ["version"]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mlx-lm>=0.21.4",
+    "outlines>=0.1.14",
+    "smolagents>=1.8.0",
+]
+
+[tool.setuptools.dynamic]
+version = { attr = "mac_smolagents._version.__version__" }
