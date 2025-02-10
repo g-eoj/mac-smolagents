@@ -7,6 +7,10 @@ This library allows you to use language models running on Apple silicon with [`s
 - Load and run models with [`mlx-lm`](https://pypi.org/project/mlx-lm/) (checkout [mlx-community](https://huggingface.co/mlx-community) for models to use).
 - Enforce structured output from models using [grammar and `outlines`](https://dottxt-ai.github.io/outlines/latest/reference/generation/cfg/).
 
+## Installation
+
+`whl` files can be found under [releases](https://github.com/g-eoj/mac-smolagents/releases).
+
 ## Examples
 
 ### Quickstart
