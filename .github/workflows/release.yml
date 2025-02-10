@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+env:
+  tag_name: ${{ github.event.release.tag_name }}
+
+jobs:
+  uv-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version
+        run: echo "__version__ = \"$(echo ${tag_name} | cut -c2-)\"" > ./src/mac_smolagents/_version.py
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Build
+        run: uv build
+
+      - name: Add whl
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: ./dist/*.whl
