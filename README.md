@@ -21,7 +21,8 @@ import smolagents
 
 
 mlx_language_model = mac_smolagents.MLXLModel(
-    model_id="mlx-community/Qwen2.5-Coder-32B-Instruct-4bit"
+    model_id="mlx-community/Qwen2.5-Coder-32B-Instruct-4bit",
+    max_tokens=10000,
 )
 agent = smolagents.CodeAgent(
     model=mlx_language_model, tools=[], add_base_tools=True
@@ -42,6 +43,7 @@ Here we select the regex logits processor:
 ```python
 mlx_language_model = mac_smolagents.MLXLModel(
     model_id="mlx-community/Qwen2.5-Coder-32B-Instruct-4bit",
+    max_tokens=10000,
     logits_processor=mac_smolagents.logits_processors.RegexLogitsProcessor,
 )
 ```
