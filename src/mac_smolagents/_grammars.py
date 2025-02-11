@@ -14,10 +14,13 @@ CodeAgentCFG = r"""
     %ignore WS_INLINE
 """
 
-CodeAgentRegex = r""
+CodeAgentRegex = r'Thought: .+\.\nCode:\n```(?:py|python)?\n([^`].|\n)*\n```<end_code>'
+
+ToolCallingAgentRegex = r'Action:\n\{\n  "name": "[^"\n]+",\n  "arguments": \{.*\}\n\}'
 
 
 @dataclasses.dataclass()
 class _Grammars:
     CodeAgentCFG=CodeAgentCFG
     CodeAgentRegex=CodeAgentRegex
+    ToolCallingAgentRegex=ToolCallingAgentRegex
