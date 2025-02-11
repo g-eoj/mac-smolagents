@@ -1,4 +1,7 @@
-CodeAgentGrammar = r"""
+import dataclasses
+
+
+CodeAgentCFG = r"""
     start: THOUGHT START_CODE CODE* END_CODE
     
     THOUGHT: "Thought:" /.+/ _NL
@@ -10,3 +13,11 @@ CodeAgentGrammar = r"""
     %import common.WS_INLINE
     %ignore WS_INLINE
 """
+
+CodeAgentRegex = r""
+
+
+@dataclasses.dataclass()
+class _Grammars:
+    CodeAgentCFG=CodeAgentCFG
+    CodeAgentRegex=CodeAgentRegex

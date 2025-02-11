@@ -1,26 +1,11 @@
-import dataclasses
 import json
 import mlx_lm
-import outlines
 import smolagents
 import uuid
 
 from typing import Dict, List, Optional
 
-
-class CFGLogitsProcessor:
-    def __init__(self, grammar, tokenizer):
-        self._outlines_processor = outlines.processors.CFGLogitsProcessor(
-            cfg_str=grammar,
-            tokenizer=outlines.models.TransformerTokenizer(tokenizer)
-        )
-
-    def __call__(self, input_ids, logits):
-        processed_logits = self._outlines_processor(
-            input_ids, 
-            logits.reshape(-1)
-        )
-        return processed_logits.reshape(1, -1)
+from mac_smolagents._logits_processors import BaseLogitsProcessor
 
 
 class MLXLModel(smolagents.Model):
@@ -29,6 +14,8 @@ class MLXLModel(smolagents.Model):
     Parameters:
         model_id (str):
             The Hugging Face model ID to be used for inference. This can be a path or model identifier from the Hugging Face model hub.
+        logits_processor (BaseLogitsProcessor *optional*):
+            Enables the model to produce structured output through grammar.
         trust_remote_code (bool):
             Some models on the Hub require running remote code: for this model, you would have to set this flag to True.
         kwargs (dict, *optional*):
@@ -57,12 +44,14 @@ class MLXLModel(smolagents.Model):
     def __init__(
         self,
         model_id: str,
+        logits_processor: Optional[BaseLogitsProcessor] = None,
         trust_remote_code: bool = False,
         **kwargs,
     ):
         super().__init__(**kwargs)
         self.model_id = model_id
         self.model, self.tokenizer = mlx_lm.load(model_id, tokenizer_config={"trust_remote_code": trust_remote_code})
+        self.logits_processor = logits_processor
 
     def _to_message(self, text, tools_to_call_from):
         if tools_to_call_from:
@@ -108,8 +97,10 @@ class MLXLModel(smolagents.Model):
         completion_kwargs.pop("tool_choice", None)
         grammar = completion_kwargs.pop("grammar", None)
         if grammar:
+            if self.logits_processor is None:
+                raise ValueError("Please initialize the model with a logits processor to use grammar.")
             completion_kwargs["logits_processors"] = [
-                CFGLogitsProcessor(grammar=grammar, tokenizer=self.tokenizer)
+                self.logits_processor(grammar=grammar, tokenizer=self.tokenizer)
             ]
             
         prompt_ids = self.tokenizer.apply_chat_template(
